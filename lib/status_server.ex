@@ -2,7 +2,7 @@ defmodule StatusServer do
   use GenServer
 
   def start_link(url, interval) do
-    GenServer.start_link(__MODULE__, [url, interval], [{:name, __MODULE__}])
+    GenServer.start_link(__MODULE__, [url, interval])
   end
 
   def init(args) do
@@ -10,6 +10,7 @@ defmodule StatusServer do
     state = 200
     interval = args[:interval]
     url = args[:url]
+    IO.inspect(args[:id])
 
     # This will send message to self on the interval. handle_info handles it.
     :timer.send_interval(interval, url)
