@@ -7,7 +7,7 @@ defmodule StatusSup do
   # supervisor callback
   def init([]) do
     child = [
-      worker(StatusServer, [url: "sheldonkreger.com", interval: 10000], []),
+      worker(StatusServer, [url: "sheldonkreger.com", interval: 1000], []),
       # worker(StatusServer, [url: "software.intel.com", interval: 1000], []),
       worker(ConCache, [[], [name: :url_cache]])
     ]
