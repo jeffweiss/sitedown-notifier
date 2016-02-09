@@ -6,12 +6,15 @@ defmodule StatusSup do
   end
   # supervisor callback
   def init([]) do
-    child = [
-      worker(StatusServer, [url: "sheldonkreger.com", interval: 1000], [id: "sheldonkreger.com"]),
-      worker(StatusServer, [url: "prodrumblog.com", interval: 1000], [id: "prodrumblog.com"]),
-      worker(ConCache, [[], [name: :url_cache]])
-    ]
-    supervise(child, [{:strategy, :one_for_one}, {:max_restarts, 5},
+    interval = Application.get_env(StatusApp, :interval, 30000)
+
+    child_site_workers =
+      for site <- Application.get_env(StatusApp, :sites) do
+        worker(StatusServer, [url: site, interval: interval], [id: site])
+      end
+    children = [worker(ConCache, [[], [name: :url_cache]])|child_site_workers]
+
+    supervise(children, [{:strategy, :one_for_one}, {:max_restarts, 5},
     {:max_seconds, 30}])
   end
   # Internal functions (none here)
